@@ -1,15 +1,339 @@
-'use strict';
-const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';
-const wishes=[['Một ngày thật vui','Chúc Mơ Màng có một ngày 20/10 đầy tiếng cười. Mong những điều nhỏ bé hôm nay cũng đủ khiến bạn mỉm cười thật lâu.'],['Rực rỡ theo cách riêng','Mong Chị Gái luôn tự tin là chính mình. Không cần giống bất kỳ ai, bạn vẫn có một màu sắc rất riêng để tỏa sáng.'],['Một chút bình yên','Chúc bạn có những ngày nhẹ lòng, những giấc ngủ thật ngon và một khoảng bình yên để nghỉ ngơi mỗi khi thấy mệt.'],['Những điều ngọt ngào','Mong chị luôn gặp được sự tử tế, những người biết lắng nghe và những điều dễ thương đến thật đúng lúc.'],['Ước mơ nở hoa','Chúc những điều bạn đang ấp ủ sẽ từng chút một thành hiện thực. Cứ đi theo nhịp của mình, và đừng quên tận hưởng hành trình nhé.'],['Thương mình nhiều hơn','Hôm nay, nhớ dành cho mình một món ngon, một chút nghỉ ngơi và thật nhiều dịu dàng. Không chỉ ngày 20/10, bạn xứng đáng được yêu thương mỗi ngày.']];
-const positions=[[224,193,65,'rose'],[354,175,60,'cream'],[425,280,66,'peach'],[158,292,58,'cream'],[270,302,72,'rose'],[340,374,57,'peach']];
-function node(tag,attrs,parent){const el=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,v);parent.appendChild(el);return el}
-let seed=62;function rand(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
-const green=$('greenery');for(let i=0;i<19;i++){let x=90+rand()*420,y=115+rand()*280;node('path',{d:`M315 540 Q${x+30} 360 ${x} ${y}`,fill:'none',stroke:'#72825e','stroke-width':2.5},green);for(let j=0;j<4;j++){const yy=y+j*40,xx=x+(315-x)*(j*.12);node('ellipse',{cx:xx+(j%2?14:-14),cy:yy+12,rx:12+rand()*7,ry:27+rand()*8,fill:'url(#leaf)',transform:`rotate(${j%2?40:-40} ${xx} ${yy})`,opacity:.85},green)}}for(let i=0;i<32;i++){let x=90+rand()*420,y=150+rand()*260;node('path',{d:`M310 490 Q${x} 390 ${x} ${y}`,stroke:'#a0a282','stroke-width':.8,fill:'none'},green);for(let j=0;j<4;j++)node('circle',{cx:x+(rand()-.5)*23,cy:y+(rand()-.5)*23,r:3+rand()*3,fill:'#fff8e6'},green)}
-positions.forEach(([x,y,r,color],i)=>{let group=node('g',{class:'flower',role:'button',tabindex:0,'aria-label':`Bông hoa ${i+1}: ${wishes[i][0]}`,'aria-haspopup':'dialog',transform:`translate(${x} ${y})`},$('flowers'));let bloom=node('g',{class:'bloom'},group);node('circle',{r:r*.95,fill:`url(#${color})`},bloom);for(let ring=0;ring<3;ring++){let count=ring===0?10:8,scale=1-ring*.25;for(let k=0;k<count;k++){let angle=360*k/count+ring*23;node('ellipse',{cx:0,cy:-r*.48*scale,rx:r*.34*scale,ry:r*.54*scale,fill:`url(#${color})`,stroke:color==='rose'?'#ad657745':color==='cream'?'#c6ad7833':'#c8906b44','stroke-width':.8,transform:`rotate(${angle})`},bloom)}}node('circle',{r:r*.14,fill:color==='cream'?'#cbaa67':color==='rose'?'#b2667b':'#ce926f'},bloom);for(let k=0;k<12;k++)node('circle',{cx:Math.cos(k*2.4)*r*.13,cy:Math.sin(k*2.4)*r*.13,r:1.6,fill:'#f6dfb2'},bloom);let label=node('g',{transform:`translate(${r*.57} ${r*.67})`},group);node('circle',{r:13,class:'labelcircle'},label);node('text',{y:4,class:'number'},label).textContent=i+1;node('text',{y:4,class:'check'},label).textContent='✓';group.addEventListener('click',()=>openWish(i,group));group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openWish(i,group)}});let dot=document.createElement('span');dot.className='dot';$('dots').appendChild(dot)});
-const visited=new Set();let activeFlower=null,justUnlocked=false;function openWish(i,group){activeFlower=group;visited.add(i);group.classList.add('visited');group.setAttribute('aria-label',`Đã mở. Bông hoa ${i+1}: ${wishes[i][0]}`);$('wishNo').textContent=`Lời chúc ${String(i+1).padStart(2,'0')} / 06`;$('wishTitle').textContent=wishes[i][0];$('wishMessage').textContent=wishes[i][1];$('progress').textContent=`${visited.size} / 6 lời chúc đã mở`;[...$('dots').children].forEach((el,index)=>el.classList.toggle('on',visited.has(index)));if(visited.size===6&&$('letter').disabled){$('letter').disabled=false;$('letter').textContent='♡  Một tấm thiệp nữa dành cho Trang';justUnlocked=true}$('wish').showModal()}
-$('closeWish').onclick=()=>$('wish').close();$('wish').addEventListener('close',()=>{activeFlower?.focus();if(justUnlocked){justUnlocked=false;confetti();toast('Bạn đã nhận đủ sáu lời chúc. Tấm thiệp cuối đang chờ bên dưới ♡')}});function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let i=0;i<26;i++){let petal=document.createElement('span');petal.className='petal';petal.style.left=rand()*100+'vw';petal.style.animationDelay=rand()*1.5+'s';petal.style.background=['#cf97a2','#dfbc9a','#d6c996'][i%3];document.body.appendChild(petal);setTimeout(()=>petal.remove(),7000)}}
-$('letter').onclick=()=>{$('card').showModal();confetti()};$('closeCard').onclick=()=>$('card').close();let toastTimer;function toast(t){$('toast').textContent=t;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').textContent='',5000)}
-const audio=$('music');let music=false;
-$('sound').onclick=async()=>{try{music=!music;if(music){await audio.play()}else{audio.pause()}$('sound').setAttribute('aria-pressed',String(music));$('sound').textContent=music?'♫  Tắt giai điệu':'♫  Bật giai điệu'}catch{music=false;$('sound').setAttribute('aria-pressed','false');$('sound').textContent='♫  Bật giai điệu';toast('Không thể phát tệp nhạc này. Hãy mở trang qua máy chủ web.') }};
-audio.addEventListener('ended',()=>{$('sound').setAttribute('aria-pressed','false');$('sound').textContent='♫  Bật giai điệu';music=false});
-$('save').onclick=()=>{let c=document.createElement('canvas');c.width=1200;c.height=1600;let g=c.getContext('2d');g.fillStyle='#fbf5ed';g.fillRect(0,0,1200,1600);g.strokeStyle='#d6b9a7';g.lineWidth=2;g.strokeRect(55,55,1090,1490);g.strokeRect(70,70,1060,1460);g.textAlign='center';g.fillStyle='#8b785e';g.font='22px Arial';g.fillText('MỘT BÓ HOA DÀNH RIÊNG CHO BẠN',600,150);for(let i=0;i<5;i++){let x=430+i*85,y=355-Math.sin(i*.85)*50;g.strokeStyle='#8b9874';g.lineWidth=5;g.beginPath();g.moveTo(600,590);g.quadraticCurveTo(x,480,x,y);g.stroke();for(let k=0;k<8;k++){g.save();g.translate(x,y);g.rotate(k*Math.PI/4);g.fillStyle=['#cd8a9c','#ebc1a1','#e6d5ac'][i%3];g.beginPath();g.ellipse(0,-22,21,36,0,0,Math.PI*2);g.fill();g.restore()}g.fillStyle='#d1aa70';g.beginPath();g.arc(x,y,13,0,7);g.fill()}g.fillStyle='#743b48';g.font='58px Arial';g.fillText('Chúc mừng 20/10,',600,710);g.font='italic 66px Arial';g.fillText('Mơ Màng',600,800);g.fillStyle='#8b7269';g.font='29px Arial';const lines=['Chúc chị Trang luôn vui vẻ, tự tin','và được yêu thương theo cách','mà bạn xứng đáng.','','Mong mỗi ngày đều có điều dễ thương tìm đến.','Hãy cứ rực rỡ theo cách của riêng mình nhé.'];lines.forEach((line,i)=>g.fillText(line,600,920+i*54));g.fillStyle='#743b48';g.font='italic 46px Arial';g.fillText('Thân gửi, Twan',600,1355);g.fillStyle='#a38c7e';g.font='19px Arial';g.fillText('20 / 10  •  NGÀY PHỤ NỮ VIỆT NAM',600,1460);c.toBlob(blob=>{if(!blob)return toast('Chưa lưu được thiệp. Bạn hãy thử lại nhé.');const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Twan20-10.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('Đã tạo ảnh thiệp dành cho Mơ Màng  ♡')},'image/png')};
+"use strict";
+const $ = (id) => document.getElementById(id),
+  ns = "http://www.w3.org/2000/svg";
+const wishes = [
+  [
+    "Một ngày thật vui",
+    "Chúc Quỳnh Mai có một ngày 20/10 đầy tiếng cười. Mong những điều nhỏ bé hôm nay cũng đủ khiến bạn mỉm cười thật lâu.",
+  ],
+  [
+    "Rực rỡ theo cách riêng",
+    "Mong Gái luôn tự tin là chính mình. Không cần giống bất kỳ ai, bạn vẫn có một màu sắc rất riêng để tỏa sáng.",
+  ],
+  [
+    "Một chút bình yên",
+    "Chúc bạn có những ngày nhẹ lòng, những giấc ngủ thật ngon và một khoảng bình yên để nghỉ ngơi mỗi khi thấy mệt.",
+  ],
+  [
+    "Những điều ngọt ngào",
+    "Mong Tóc Đỏ luôn gặp được sự tử tế, những người biết lắng nghe và những điều dễ thương đến thật đúng lúc.",
+  ],
+  [
+    "Ước mơ nở hoa",
+    "Chúc những điều bạn đang ấp ủ sẽ từng chút một thành hiện thực. Cứ đi theo nhịp của mình, và đừng quên tận hưởng hành trình nhé.",
+  ],
+  [
+    "Thương mình nhiều hơn",
+    "Hôm nay, nhớ dành cho mình một món ngon, một chút nghỉ ngơi và thật nhiều dịu dàng. Không chỉ ngày 20/10, bạn xứng đáng được yêu thương mỗi ngày.",
+  ],
+];
+const positions = [
+  [224, 193, 65, "rose"],
+  [354, 175, 60, "cream"],
+  [425, 280, 66, "peach"],
+  [158, 292, 58, "cream"],
+  [270, 302, 72, "rose"],
+  [340, 374, 57, "peach"],
+];
+function node(tag, attrs, parent) {
+  const el = document.createElementNS(ns, tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  parent.appendChild(el);
+  return el;
+}
+let seed = 62;
+function rand() {
+  seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+  return seed / 4294967296;
+}
+const green = $("greenery");
+for (let i = 0; i < 19; i++) {
+  let x = 90 + rand() * 420,
+    y = 115 + rand() * 280;
+  node(
+    "path",
+    {
+      d: `M315 540 Q${x + 30} 360 ${x} ${y}`,
+      fill: "none",
+      stroke: "#72825e",
+      "stroke-width": 2.5,
+    },
+    green,
+  );
+  for (let j = 0; j < 4; j++) {
+    const yy = y + j * 40,
+      xx = x + (315 - x) * (j * 0.12);
+    node(
+      "ellipse",
+      {
+        cx: xx + (j % 2 ? 14 : -14),
+        cy: yy + 12,
+        rx: 12 + rand() * 7,
+        ry: 27 + rand() * 8,
+        fill: "url(#leaf)",
+        transform: `rotate(${j % 2 ? 40 : -40} ${xx} ${yy})`,
+        opacity: 0.85,
+      },
+      green,
+    );
+  }
+}
+for (let i = 0; i < 32; i++) {
+  let x = 90 + rand() * 420,
+    y = 150 + rand() * 260;
+  node(
+    "path",
+    {
+      d: `M310 490 Q${x} 390 ${x} ${y}`,
+      stroke: "#a0a282",
+      "stroke-width": 0.8,
+      fill: "none",
+    },
+    green,
+  );
+  for (let j = 0; j < 4; j++)
+    node(
+      "circle",
+      {
+        cx: x + (rand() - 0.5) * 23,
+        cy: y + (rand() - 0.5) * 23,
+        r: 3 + rand() * 3,
+        fill: "#fff8e6",
+      },
+      green,
+    );
+}
+positions.forEach(([x, y, r, color], i) => {
+  let group = node(
+    "g",
+    {
+      class: "flower",
+      role: "button",
+      tabindex: 0,
+      "aria-label": `Bông hoa ${i + 1}: ${wishes[i][0]}`,
+      "aria-haspopup": "dialog",
+      transform: `translate(${x} ${y})`,
+    },
+    $("flowers"),
+  );
+  let bloom = node("g", { class: "bloom" }, group);
+  node("circle", { r: r * 0.95, fill: `url(#${color})` }, bloom);
+  for (let ring = 0; ring < 3; ring++) {
+    let count = ring === 0 ? 10 : 8,
+      scale = 1 - ring * 0.25;
+    for (let k = 0; k < count; k++) {
+      let angle = (360 * k) / count + ring * 23;
+      node(
+        "ellipse",
+        {
+          cx: 0,
+          cy: -r * 0.48 * scale,
+          rx: r * 0.34 * scale,
+          ry: r * 0.54 * scale,
+          fill: `url(#${color})`,
+          stroke:
+            color === "rose"
+              ? "#ad657745"
+              : color === "cream"
+                ? "#c6ad7833"
+                : "#c8906b44",
+          "stroke-width": 0.8,
+          transform: `rotate(${angle})`,
+        },
+        bloom,
+      );
+    }
+  }
+  node(
+    "circle",
+    {
+      r: r * 0.14,
+      fill:
+        color === "cream"
+          ? "#cbaa67"
+          : color === "rose"
+            ? "#b2667b"
+            : "#ce926f",
+    },
+    bloom,
+  );
+  for (let k = 0; k < 12; k++)
+    node(
+      "circle",
+      {
+        cx: Math.cos(k * 2.4) * r * 0.13,
+        cy: Math.sin(k * 2.4) * r * 0.13,
+        r: 1.6,
+        fill: "#f6dfb2",
+      },
+      bloom,
+    );
+  let label = node(
+    "g",
+    { transform: `translate(${r * 0.57} ${r * 0.67})` },
+    group,
+  );
+  node("circle", { r: 13, class: "labelcircle" }, label);
+  node("text", { y: 4, class: "number" }, label).textContent = i + 1;
+  node("text", { y: 4, class: "check" }, label).textContent = "✓";
+  group.addEventListener("click", () => openWish(i, group));
+  group.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openWish(i, group);
+    }
+  });
+  let dot = document.createElement("span");
+  dot.className = "dot";
+  $("dots").appendChild(dot);
+});
+const visited = new Set();
+let activeFlower = null,
+  justUnlocked = false;
+function openWish(i, group) {
+  activeFlower = group;
+  visited.add(i);
+  group.classList.add("visited");
+  group.setAttribute("aria-label", `Đã mở. Bông hoa ${i + 1}: ${wishes[i][0]}`);
+  $("wishNo").textContent = `Lời chúc ${String(i + 1).padStart(2, "0")} / 06`;
+  $("wishTitle").textContent = wishes[i][0];
+  $("wishMessage").textContent = wishes[i][1];
+  $("progress").textContent = `${visited.size} / 6 lời chúc đã mở`;
+  [...$("dots").children].forEach((el, index) =>
+    el.classList.toggle("on", visited.has(index)),
+  );
+  if (visited.size === 6 && $("letter").disabled) {
+    $("letter").disabled = false;
+    $("letter").textContent = "♡  Một tấm thiệp nữa dành cho Trang";
+    justUnlocked = true;
+  }
+  $("wish").showModal();
+}
+$("closeWish").onclick = () => $("wish").close();
+$("wish").addEventListener("close", () => {
+  activeFlower?.focus();
+  if (justUnlocked) {
+    justUnlocked = false;
+    confetti();
+    toast("Bạn đã nhận đủ sáu lời chúc. Tấm thiệp cuối đang chờ bên dưới ♡");
+  }
+});
+function confetti() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  for (let i = 0; i < 26; i++) {
+    let petal = document.createElement("span");
+    petal.className = "petal";
+    petal.style.left = rand() * 100 + "vw";
+    petal.style.animationDelay = rand() * 1.5 + "s";
+    petal.style.background = ["#cf97a2", "#dfbc9a", "#d6c996"][i % 3];
+    document.body.appendChild(petal);
+    setTimeout(() => petal.remove(), 7000);
+  }
+}
+$("letter").onclick = () => {
+  $("card").showModal();
+  confetti();
+};
+$("closeCard").onclick = () => $("card").close();
+let toastTimer;
+function toast(t) {
+  $("toast").textContent = t;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => ($("toast").textContent = ""), 5000);
+}
+const audio = $("music");
+let music = false;
+$("sound").onclick = async () => {
+  try {
+    music = !music;
+    if (music) {
+      await audio.play();
+    } else {
+      audio.pause();
+    }
+    $("sound").setAttribute("aria-pressed", String(music));
+    $("sound").textContent = music ? "♫  Tắt giai điệu" : "♫  Bật giai điệu";
+  } catch {
+    music = false;
+    $("sound").setAttribute("aria-pressed", "false");
+    $("sound").textContent = "♫  Bật giai điệu";
+    toast("Không thể phát tệp nhạc này. Hãy mở trang qua máy chủ web.");
+  }
+};
+audio.addEventListener("ended", () => {
+  $("sound").setAttribute("aria-pressed", "false");
+  $("sound").textContent = "♫  Bật giai điệu";
+  music = false;
+});
+$("save").onclick = () => {
+  let c = document.createElement("canvas");
+  c.width = 1200;
+  c.height = 1600;
+  let g = c.getContext("2d");
+  g.fillStyle = "#fbf5ed";
+  g.fillRect(0, 0, 1200, 1600);
+  g.strokeStyle = "#d6b9a7";
+  g.lineWidth = 2;
+  g.strokeRect(55, 55, 1090, 1490);
+  g.strokeRect(70, 70, 1060, 1460);
+  g.textAlign = "center";
+  g.fillStyle = "#8b785e";
+  g.font = "22px Arial";
+  g.fillText("MỘT BÓ HOA DÀNH RIÊNG CHO BẠN", 600, 150);
+  for (let i = 0; i < 5; i++) {
+    let x = 430 + i * 85,
+      y = 355 - Math.sin(i * 0.85) * 50;
+    g.strokeStyle = "#8b9874";
+    g.lineWidth = 5;
+    g.beginPath();
+    g.moveTo(600, 590);
+    g.quadraticCurveTo(x, 480, x, y);
+    g.stroke();
+    for (let k = 0; k < 8; k++) {
+      g.save();
+      g.translate(x, y);
+      g.rotate((k * Math.PI) / 4);
+      g.fillStyle = ["#cd8a9c", "#ebc1a1", "#e6d5ac"][i % 3];
+      g.beginPath();
+      g.ellipse(0, -22, 21, 36, 0, 0, Math.PI * 2);
+      g.fill();
+      g.restore();
+    }
+    g.fillStyle = "#d1aa70";
+    g.beginPath();
+    g.arc(x, y, 13, 0, 7);
+    g.fill();
+  }
+  g.fillStyle = "#743b48";
+  g.font = "58px Arial";
+  g.fillText("Chúc mừng 20/10,", 600, 710);
+  g.font = "italic 66px Arial";
+  g.fillText("Mơ Màng", 600, 800);
+  g.fillStyle = "#8b7269";
+  g.font = "29px Arial";
+  const lines = [
+    "Chúc chị Trang luôn vui vẻ, tự tin",
+    "và được yêu thương theo cách",
+    "mà bạn xứng đáng.",
+    "",
+    "Mong mỗi ngày đều có điều dễ thương tìm đến.",
+    "Hãy cứ rực rỡ theo cách của riêng mình nhé.",
+  ];
+  lines.forEach((line, i) => g.fillText(line, 600, 920 + i * 54));
+  g.fillStyle = "#743b48";
+  g.font = "italic 46px Arial";
+  g.fillText("Thân gửi, Twan", 600, 1355);
+  g.fillStyle = "#a38c7e";
+  g.font = "19px Arial";
+  g.fillText("20 / 10  •  NGÀY PHỤ NỮ VIỆT NAM", 600, 1460);
+  c.toBlob((blob) => {
+    if (!blob) return toast("Chưa lưu được thiệp. Bạn hãy thử lại nhé.");
+    const url = URL.createObjectURL(blob),
+      a = document.createElement("a");
+    a.href = url;
+    a.download = "Twan20-10.png";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    toast("Đã tạo ảnh thiệp dành cho Mơ Màng  ♡");
+  }, "image/png");
+};
