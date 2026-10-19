@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#fbf5ed" />
+    <title>Gửi Mơ Màng — Một bó hoa từ Twan</title>
+    <meta
+      name="description"
+      content="Một bó hoa nhỏ, sáu lời chúc dịu dàng. Từ Twan, dành riêng cho Mơ Màng nhân ngày 20/10."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo"><span>✿</span> một chút thương.</div>
+      <span class="date">20 . 10 — NGÀY PHỤ NỮ VIỆT NAM</span
+      ><button id="sound" class="sound" aria-pressed="false">
+        ♫ &nbsp; Bật giai điệu
+      </button>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="copy">
+          <div class="eyebrow">Một món quà nhỏ từ Twan</div>
+          <h1>Một bó hoa<br />dành riêng<br /><em>cho bạn.</em></h1>
+          <div class="dedication">Gửi Mơ Màng</div>
+          <p class="description">
+            Có những điều nhỏ xíu, hôm nay muốn gửi đến bạn. Mỗi bông hoa là một
+            lời chúc — chạm nhẹ để khám phá nhé.
+          </p>
+          <div class="sender">
+            <span>Gói ghém bằng sự chân thành,</span><b>Twan</b
+            ><span class="smallheart">♡</span>
+          </div>
+        </div>
+        <div class="art">
+          <div class="halo"></div>
+          <svg
+            id="bouquet"
+            class="bouquet"
+            viewBox="0 0 600 670"
+            role="group"
+            aria-label="Bó hoa sáu lời chúc. Chọn từng bông hoa để đọc."
+          >
+            <defs>
+              <linearGradient id="wrap" x2="1" y2="1">
+                <stop stop-color="#f0dec5" />
+                <stop offset="1" stop-color="#ceb493" />
+              </linearGradient>
+              <linearGradient id="leaf" x2="1" y2="1">
+                <stop stop-color="#a3a982" />
+                <stop offset="1" stop-color="#647752" />
+              </linearGradient>
+              <radialGradient id="rose">
+                <stop stop-color="#b75b72" />
+                <stop offset=".6" stop-color="#db8c9d" />
+                <stop offset="1" stop-color="#ebbac3" />
+              </radialGradient>
+              <radialGradient id="peach">
+                <stop stop-color="#d48a64" />
+                <stop offset=".6" stop-color="#edb496" />
+                <stop offset="1" stop-color="#f4d7bd" />
+              </radialGradient>
+              <radialGradient id="cream">
+                <stop stop-color="#e0bb80" />
+                <stop offset=".5" stop-color="#f7e5bd" />
+                <stop offset="1" stop-color="#fff5dd" />
+              </radialGradient>
+              <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow
+                  dx="0"
+                  dy="5"
+                  stdDeviation="5"
+                  flood-color="#855b4a"
+                  flood-opacity=".15"
+                />
+              </filter>
+            </defs>
+            <g id="greenery"></g>
+            <path
+              d="M133 311 Q305 378 477 306 L364 596 Q320 631 266 602Z"
+              fill="url(#wrap)"
+              opacity=".94"
+            />
+            <path d="M133 311 L325 458 266 602Z" fill="#f1e3ce" />
+            <path d="M477 306 L325 458 364 596Z" fill="#e8cfaf" />
+            <path
+              d="M167 346 L299 466 277 572M447 340L345 465 357 573"
+              fill="none"
+              stroke="#bd9f7f"
+              opacity=".3"
+            />
+            <g id="flowers" filter="url(#shadow)"></g>
+            <g fill="#a85e72" stroke="#8d4c60" stroke-width="1">
+              <path
+                d="M312 506 C207 449 224 554 312 518 C362 432 422 504 327 519 C365 556 357 577 376 589 L346 581 326 527 L298 590 277 582 309 519Z"
+              />
+              <ellipse cx="319" cy="513" rx="14" ry="12" />
+            </g>
+            <path
+              d="M332 536 L404 552 392 602 321 586Z"
+              fill="#fff6e8"
+              stroke="#d7c1aa"
+            />
+            <circle cx="337" cy="545" r="3" fill="#b7a089" />
+            <path d="M326 522 Q349 529 337 545" fill="none" stroke="#9a7b61" />
+            <text
+              x="363"
+              y="567"
+              transform="rotate(12 363 567)"
+              class="ribbontext"
+            >
+              for you
+            </text>
+            <text
+              x="357"
+              y="586"
+              transform="rotate(12 357 586)"
+              fill="#ae8b78"
+              font-size="8"
+              text-anchor="middle"
+              letter-spacing="2"
+            >
+              20 / 10
+            </text>
+          </svg>
+          <div class="hint">
+            Chạm vào hoa,<br />nhận một chút vui.<span>↖</span>
+          </div>
+        </div>
+      </section>
+      <section class="below">
+        <div class="progressarea">
+          <div class="dots" id="dots" aria-hidden="true"></div>
+          <span class="progresscopy" id="progress" role="status"
+            >0 / 6 lời chúc đã mở</span
+          >
+        </div>
+        <button class="letterbutton" id="letter" disabled>
+          ♡ &nbsp; Mở 6 bông hoa để nhận thiệp
+        </button>
+      </section>
+      <footer class="footer">
+        <span>TWAN → Mơ Màng</span
+        ><span class="mid">Mong hôm nay của bạn dịu dàng như hoa.</span
+        ><span>HAPPY VIETNAMESE WOMEN'S DAY</span>
+      </footer>
+    </main>
+    <dialog id="wish">
+      <div class="modalicon">✿</div>
+      <div class="eyebrow" id="wishNo"></div>
+      <h2 id="wishTitle"></h2>
+      <p class="message" id="wishMessage"></p>
+      <button class="close" id="closeWish">Cất lời chúc này ♡</button>
+    </dialog>
+    <dialog id="card">
+      <div class="modalicon">❦</div>
+      <div class="eyebrow">Một tấm thiệp dành riêng cho bạn</div>
+      <h2>Chúc mừng 20/10,<br /><em>Mơ Màng</em></h2>
+      <p class="message">
+        Chúc Chị Gái luôn vui vẻ, tự tin và được yêu thương theo cách mà bạn xứng
+        đáng.<br /><br />Mong những ngày sắp tới có thật nhiều điều dễ thương
+        tìm đến bạn. Và dù là hôm nay hay bất cứ ngày nào, hãy cứ rực rỡ theo
+        cách của riêng mình nhé.
+      </p>
+      <div class="signature">Thân gửi, Twan ♡</div>
+      <button class="close" id="save">Lưu tấm thiệp ↓</button
+      ><button class="textbutton" id="closeCard">Trở lại bó hoa</button>
+    </dialog>
+    <div class="toast" role="status" id="toast"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
